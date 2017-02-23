@@ -18,6 +18,12 @@ import {
 // Component specific libraries.
 import _ from 'lodash';
 import Moment from 'moment';
+import Icon from 'react-native-vector-icons/FontAwesome'
+
+//icons
+const leftArrow = (<Icon name="angle-left" size={30} color="white"/>)
+const rightArrow = (<Icon name="angle-right" size={30} color="white"/>)
+
 // Pure components importing.
 import YearSelector from '../pure/YearSelector.react';
 import MonthSelector from '../pure/MonthSelector.react';
@@ -28,15 +34,14 @@ const DAY_SELECTOR : Stage = "day";
 const MONTH_SELECTOR : Stage = "month";
 const YEAR_SELECTOR : Stage = "year";
 
-// Unicode characters
-const LEFT_CHEVRON = '\u276E';
-const RIGHT_CHEVRON = '\u276F';
 
 type Props = {
   // The core properties.
   selected?: Moment,
   onChange?: (date: Moment) => void,
   slideThreshold?: number,
+  dayPainted?: array,
+  reloadMonthEvents?: string,
   // Minimum and maximum date.
   minDate: Moment,
   maxDate: Moment,
@@ -116,10 +121,12 @@ export default class Calendar extends Component {
   };
 
   _previousMonth = () : void => {
+    this._reloadMonthEvents()
     this.setState({monthOffset: -1});
   };
 
   _nextMonth = () : void => {
+    this._reloadMonthEvents()
     this.setState({monthOffset: 1});
   };
 
@@ -127,6 +134,11 @@ export default class Calendar extends Component {
     this.setState({focus, monthOffset: 0});
     this._nextStage();
   };
+
+  _reloadMonthEvents = () => {
+    console.log('_reloadMonthEvents_reloadMonthEvents_reloadMonthEvents_reloadMonthEvents');
+    this.props.reloadMonthEvents()
+  }
 
   render() {
     const barStyle = StyleSheet.flatten([styles.barView, this.props.barView]);
@@ -151,7 +163,7 @@ export default class Calendar extends Component {
                 underlayColor={barStyle ? barStyle.backgroundColor : 'transparent'}
                 onPress={this._previousMonth}
               >
-                <Text style={this.props.barText}>{LEFT_CHEVRON}</Text>
+                <Text style={[this.props.barText, {marginRight:20}]}>{leftArrow}</Text>
               </TouchableHighlight> : <View/>
             }
 
@@ -172,7 +184,7 @@ export default class Calendar extends Component {
                 underlayColor={barStyle ? barStyle.backgroundColor : 'transparent'}
                 onPress={this._nextMonth}
               >
-                <Text style={this.props.barText}>{RIGHT_CHEVRON}</Text>
+                <Text style={[this.props.barText, {marginLeft:20}]}>{rightArrow}</Text>
               </TouchableHighlight> : <View/>
             }
           </View>
@@ -201,6 +213,7 @@ export default class Calendar extends Component {
               dayTodayText={this.props.dayTodayText}
               daySelectedText={this.props.daySelectedText}
               dayDisabledText={this.props.dayDisabledText}
+              dayPainted={this.props.dayPainted}
               /> :
             this.state.stage === MONTH_SELECTOR ?
             <MonthSelector
@@ -243,7 +256,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexDirection: 'row',
     padding: 5,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   nextStage: {

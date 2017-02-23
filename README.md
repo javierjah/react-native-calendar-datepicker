@@ -1,13 +1,8 @@
 # React Native Calendar Datepicker
 
 ## Description
-
-This project aims at providing developers with a *cross-platform, highly customizable*, **calendar date picker** component for React Native.
-
-Here is a quick example of how it works, with custom appearance:
-
-![alt text](https://github.com/vlad-doru/react-native-calendar-datepicker/blob/master/demo.gif?raw=true "Custom Demo Example")
-
+<!--
+This project aims at providing developers with a *cross-platform, highly customizable*, **calendar date picker** component for React Native.-->
 ## Installation
 
 `npm install --save react-native-calendar-datepicker`
@@ -15,7 +10,7 @@ Here is a quick example of how it works, with custom appearance:
 __Minimum react-native: "^0.33.0"__
 
 ## Basic Usage
-
+<!--
 Getting started with this component is very very easy. However, the initial appearance is minimalistic, but the library offers the developer the ability to easily customize it.
 
 In its most basic form, the usage of this component looks like this:
@@ -33,7 +28,7 @@ import Moment from 'moment';
     minDate={Moment().startOf('day')}
     maxDate={Moment().add(10, 'years').startOf('day')}
     />
-```
+```-->
 
 ## API Reference
 
@@ -54,18 +49,6 @@ import Moment from 'moment';
 ### Locale specific calendar
 
 In order to change the locale of the calendar, just change the locale of Moment.js. Please make sure to do so before using the calendar component.
-
-### Styling properties
-
-In its initial form the component has a minimalistic appearance, shown in the picture below, but it can easily be customized.
-
-<img src="https://github.com/vlad-doru/react-native-calendar-datepicker/blob/master/barebones.png?raw=true" width="200"/>
-
-Styled example with arrows:
-
-<img src="https://github.com/jasongaare/react-native-calendar-datepicker/blob/SelectionArrows/styled-with-arrows.png?raw=true" width="200"/>
-
-Below is the list of properties that can be used for styling. For a concrete example, check out the [demo app link](https://github.com/vlad-doru/react-native-calendar-datepicker/blob/master/demo/index.ios.js)
 
 | Property | Type | Explanation
 | --- | --- | ---
@@ -89,30 +72,10 @@ Below is the list of properties that can be used for styling. For a concrete exa
 | yearText | Text.propTypes.style | Styling the year text
 
 
-
-## TODO
-
-- [ ] Add unit tests
-- [ ] Add integration test
-- [ ] Set up continous integration
-- [ ] Hook to codeclimate.com
-
-## Contributing
-
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
-
 ## Credits
 
-Main Developer: [Vlad-Doru Ion](http://github.com/vlad-doru)
-
-Pull requests by: 
-* [Jason Gaare](http://github.com/jasongaare)
-* [Igor Kurr](http://github.com/igorrKurr) 
+Component github based: [Vlad-Doru Ion](http://github.com/vlad-doru)
 
 ## License
 
-Apache License 2.0
+MIT

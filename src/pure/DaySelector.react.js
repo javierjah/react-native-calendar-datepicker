@@ -19,6 +19,7 @@ import _ from 'lodash';
 import Moment from 'moment';
 
 type Props = {
+  dayPainted?: array,
   // Focus and selection control.
   focus: Moment,
   selected?: Moment,
@@ -151,7 +152,7 @@ export default class DaySelector extends Component {
     }
   }
 
-  _computeDays = (props: Object) : Array<Array<Object>> => {
+  _computeDays = (props) => {
     let result = [];
     const currentMonth = props.focus.month();
     let iterator = Moment(props.focus);
@@ -166,6 +167,7 @@ export default class DaySelector extends Component {
         date: iterator.date(),
         selected: props.selected && iterator.isSame(props.selected, 'day'),
         today: iterator.isSame(Moment(), 'day'),
+
       };
       // Add it to the result here.
       iterator.add(1, 'day');
@@ -209,17 +211,23 @@ export default class DaySelector extends Component {
                   activeOpacity={day.valid ? 0.8 : 1}
                   underlayColor='transparent'
                   onPress={() => day.valid && this._onChange(day)}>
-                  <Text style={[
-                    styles.dayText,
-                    this.props.dayText,
-                    day.today ? this.props.dayTodayText : null,
-                    day.selected ? styles.selectedText : null,
-                    day.selected ? this.props.daySelectedText : null,
-                    day.valid ? null : styles.disabledText,
-                    day.valid ? null : this.props.dayDisabledText,
-                  ]}>
-                    {day.date}
-                  </Text>
+                  <View>
+                    <Text style={[
+                      styles.dayText,
+                      this.props.dayText,
+                      day.today ? this.props.dayTodayText : null,
+                      day.selected ? styles.selectedText : null,
+                      day.selected ? this.props.daySelectedText : null,
+                      day.valid ? null : styles.disabledText,
+                      day.valid ? null : this.props.dayDisabledText,
+                    ]}>
+                      {day.date}
+                    </Text>
+                    {/*this.props.dayPainted.indexOf(day.date) >= 0 ? <View
+                    style={{backgroundColor:'#1abc9c', width:5, height:5, borderRadius:10, alignSelf:'center', alignItems: 'flex-end', marginTop:-9}}/> : null*/}
+                    <View
+                      style={{backgroundColor:'#1abc9c', width:5, height:5, borderRadius:10, alignSelf:'center', alignItems: 'flex-end', marginTop:-9}}/>
+                  </View>
                 </TouchableHighlight>
               )}
             </View>
@@ -262,8 +270,10 @@ const styles = StyleSheet.create({
   dayText: {
     flexGrow: 1,
     minWidth: 30,
-    padding: 5,
+    padding: 9,
     textAlign: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   selectedText: {
     borderRadius: 5,
