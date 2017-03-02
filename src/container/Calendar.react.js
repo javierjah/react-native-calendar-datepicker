@@ -1,11 +1,10 @@
 /**
 * Calendar container component.
-* @flow
 */
 
 console.ignoredYellowBox = ['Warning: Overriding '];
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
   LayoutAnimation,
   Slider,
@@ -29,56 +28,10 @@ import YearSelector from '../pure/YearSelector.react';
 import MonthSelector from '../pure/MonthSelector.react';
 import DaySelector from '../pure/DaySelector';
 
-type Stage = "day" | "month" | "year";
-const DAY_SELECTOR : Stage = "day";
-const MONTH_SELECTOR : Stage = "month";
-const YEAR_SELECTOR : Stage = "year";
-
-
-type Props = {
-  // The core properties.
-  annualEvents: array,
-  selected?: Moment,
-  onDayChange?: (date: Moment) => void,
-  onMonthChange?: (date) => void,
-  slideThreshold?: number,
-  dayPainted?: array,
-  groupedByMonths: array,
-  // Minimum and maximum date.
-  minDate: Moment,
-  maxDate: Moment,
-  // The starting stage for selection. Defaults to day.
-  startStage: Stage,
-  // General styling properties.
-  style?: View.propTypes.style,
-  barView?: View.propTypes.style,
-  barText?: Text.propTypes.style,
-  stageView?: View.propTypes.style,
-  showArrows: boolean,
-  // Styling properties for selecting the day.
-  dayHeaderView?: View.propTypes.style,
-  dayHeaderText?: Text.propTypes.style,
-  dayRowView?: View.propTypes.style,
-  dayView?: View.propTypes.style,
-  daySelectedView?: View.propTypes.style,
-  dayText?: Text.propTypes.style,
-  dayTodayText?: Text.propTypes.style,
-  daySelectedText?: Text.propTypes.style,
-  dayDisabledText?: Text.propTypes.style,
-  // Styling properties for selecting the month.
-  monthText?: Text.propTypes.style,
-  monthDisabledText?: Text.propTypes.style,
-  // Styling properties for selecting the year.
-  yearMinTintColor?: string,
-  yearMaxTintColor?: string,
-  yearSlider?: Slider.propTypes.style,
-  yearText?: Text.propTypes.style,
-};
-type State = {
-  stage: Stage,
-  // Focus points to the first day of the month that is in current focus.
-  focus: Moment,
-};
+// type Stage = "day" | "month" | "year";
+const DAY_SELECTOR = "day";
+const MONTH_SELECTOR = "month";
+const YEAR_SELECTOR = "year";
 
 export default class Calendar extends Component {
   static defaultProps;
@@ -118,7 +71,7 @@ export default class Calendar extends Component {
     if (this.state.stage === MONTH_SELECTOR) {
       this.setState({stage: YEAR_SELECTOR})
     }
-    LayoutAnimation.easeInEaseOut();
+    // LayoutAnimation.easeInEaseOut();
   }
 
   _nextStage = () => {
@@ -128,7 +81,7 @@ export default class Calendar extends Component {
     if (this.state.stage === YEAR_SELECTOR) {
       this.setState({stage: MONTH_SELECTOR})
     }
-    LayoutAnimation.easeInEaseOut();
+    // LayoutAnimation.easeInEaseOut();
   }
 
   _currentMonthEvents(date) {
@@ -138,7 +91,6 @@ export default class Calendar extends Component {
 
     if (currentMonthEvents !== undefined) {
 
-      console.log(currentMonthEvents);
       this.setState({currentMonthEvents: currentMonthEvents})
 
       // Get days events
@@ -183,13 +135,9 @@ export default class Calendar extends Component {
   }
 
   _getInitialMonthEv(date, groupEventsByMonths) {
-    console.log(date);
-    console.log(groupEventsByMonths);
-    console.log(date.format('YYYY-MM'));
     let currentMonthEvents
 
     for (var key in groupEventsByMonths) {
-        console.log(key);
       if (date.format('YYYY-MM') == key) {
         return currentMonthEvents = groupEventsByMonths[key]
       }
@@ -207,8 +155,6 @@ export default class Calendar extends Component {
   _getDayEvents(date) {
     let dayEvents = []
     let formatedDay = Moment(date).format('YYYY-MM-DD')
-    console.log(date);
-    console.log(this.state.currentMonthEvents);
     this.state.currentMonthEvents.map((event) => {
       if (event.date === formatedDay) {
         dayEvents.push(event)
@@ -230,16 +176,12 @@ export default class Calendar extends Component {
   componentDidMount() {
     let currentMonthEvents
     let groupEventsByMonths
-    console.log(this.props.annualEvents);
     if (this.props.annualEvents.length != 0) {
       // Get event group by months
       groupEventsByMonths = this._getEvByMonths()
       this.setState({groupEventsByMonths: groupEventsByMonths})
-      console.log(groupEventsByMonths);
-      console.log(this.state.currentMonth);
       //Get initial month events
       currentMonthEvents = this._getInitialMonthEv(this.state.currentMonth, groupEventsByMonths)
-      console.log(currentMonthEvents);
       this.setState({currentMonthEvents: currentMonthEvents})
       // Get days with events
       let daysWithEvent = this._getDayWithEvents(currentMonthEvents)
@@ -359,45 +301,45 @@ Calendar.defaultProps = {
   showArrows: false,
 }
 
-// Calendar.propTypes = {
-//   // The core properties.
-//   annualEvents: PropTypes.array,
-//   selected: PropTypes.date,
-//   onDayChange: PropTypes.date,
-//   onMonthChange: PropTypes.date,
-//   slideThreshold: PropTypes.number,
-//   dayPainted: PropTypes.array,
-//   groupedByMonths: PropTypes.array,
-//   // Minimum and maximum date.
-//   minDate: PropTypes.date,
-//   maxDate: PropTypes.date,
-//   // The starting stage for selection. Defaults to day.
-//   startStage: PropTypes.oneOf(['day', 'month', 'year']),
-//   // General styling properties.
-//   style: PropTypes.any,
-//   barView: PropTypes.any,
-//   barText: PropTypes.any,
-//   stageView: PropTypes.any,
-//   showArrows: boolean,
-//   // Styling properties for selecting the day.
-//   dayHeaderView: PropTypes.any,
-//   dayHeaderText: PropTypes.any,
-//   dayRowView: PropTypes.any,
-//   dayView: PropTypes.any,
-//   daySelectedView: PropTypes.any,
-//   dayText: PropTypes.any,
-//   dayTodayText: PropTypes.any,
-//   daySelectedText: PropTypes.any,
-//   dayDisabledText: PropTypes.any,
-//   // Styling properties for selecting the month.
-//   monthText: PropTypes.any,
-//   monthDisabledText: PropTypes.any,
-//   // Styling properties for selecting the year.
-//   yearMinTintColor: PropTypes.string,
-//   yearMaxTintColor: PropTypes.string,
-//   yearSlider: Slider.propTypes.style,
-//   yearText: PropTypes.any,
-// }; 
+Calendar.propTypes = {
+  // The core properties.
+  annualEvents: React.PropTypes.array,
+  selected: React.PropTypes.any,
+  onDayChange: React.PropTypes.any,
+  onMonthChange: React.PropTypes.any,
+  slideThreshold: React.PropTypes.number,
+  dayPainted: React.PropTypes.array,
+  groupedByMonths: React.PropTypes.array,
+  // Minimum and maximum date.
+  minDate: React.PropTypes.any,
+  maxDate: React.PropTypes.any,
+  // The starting stage for selection. Defaults to day.
+  startStage: React.PropTypes.oneOf(['day', 'month', 'year']),
+  // General styling properties.
+  style: React.PropTypes.any,
+  barView: React.PropTypes.any,
+  barText: React.PropTypes.any,
+  stageView: React.PropTypes.any,
+  showArrows: React.PropTypes.bool,
+  // Styling properties for selecting the day.
+  dayHeaderView: React.PropTypes.any,
+  dayHeaderText: React.PropTypes.any,
+  dayRowView: React.PropTypes.any,
+  dayView: React.PropTypes.any,
+  daySelectedView: React.PropTypes.any,
+  dayText: React.PropTypes.any,
+  dayTodayText: React.PropTypes.any,
+  daySelectedText: React.PropTypes.any,
+  dayDisabledText: React.PropTypes.any,
+  // Styling properties for selecting the month.
+  monthText: React.PropTypes.any,
+  monthDisabledText: React.PropTypes.any,
+  // Styling properties for selecting the year.
+  yearMinTintColor: React.PropTypes.string,
+  yearMaxTintColor: React.PropTypes.string,
+  yearSlider: React.PropTypes.any,
+  yearText: React.PropTypes.any,
+};
 
 
 const styles = StyleSheet.create({

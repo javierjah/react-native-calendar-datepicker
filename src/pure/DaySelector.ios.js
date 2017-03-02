@@ -1,9 +1,8 @@
 /**
 * DaySelector pure component.
-* @flow
 */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
   Dimensions,
   PanResponder,
@@ -18,40 +17,9 @@ import {
 import _ from 'lodash';
 import Moment from 'moment';
 
-type Props = {
-  dayPainted?: array,
-  // Focus and selection control.
-  focus: Moment,
-  selected?: Moment,
-  onDayChange?: (date: Moment) => void,
-  onFocus?: (date: Moment) => void,
-  slideThreshold?: number,
-  monthOffset?: number,
-  // Minimum and maximum dates.
-  minDate: Moment,
-  maxDate: Moment,
-  // Styling properties.
-  dayHeaderView?: View.propTypes.style,
-  dayHeaderText?: Text.propTypes.style,
-  dayRowView?: View.propTypes.style,
-  dayView?: View.propTypes.style,
-  daySelectedView?: View.propTypes.style,
-  dayText?: Text.propTypes.style,
-  dayTodayText?: Text.propTypes.style,
-  daySelectedText?: Text.propTypes.style,
-  dayDisabledText?: Text.propTypes.style,
-};
-type State = {
-  days: Array<Array<Object>>,
-};
-
 export default class DaySelector extends Component {
-  props: Props;
-  state: State;
-  static defaultProps: Props;
-  _panResponder: PanResponder;
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     this.state = {
       days: this._computeDays(props),
@@ -59,7 +27,7 @@ export default class DaySelector extends Component {
     }
   }
 
-  _slide = (dx : number) => {
+  _slide = (dx) => {
     this.refs.wrapper.setNativeProps({
       style: {
         left: dx,
@@ -68,78 +36,78 @@ export default class DaySelector extends Component {
   };
 
   componentWillMount() {
-    // Hook the pan responder to interpretate gestures.
-    this._panResponder = PanResponder.create({
-      // Ask to be the responder:
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 5;
-      },
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-          return Math.abs(gestureState.dx) > 5;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        this._slide(gestureState.dx);
-      },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => {
-        // The user has released all touches while this view is the
-        // responder. This typically means a gesture has succeeded
+    // // Hook the pan responder to interpretate gestures.
+    // this._panResponder = PanResponder.create({
+    //   // Ask to be the responder:
+    //   onStartShouldSetPanResponder: (evt, gestureState) => true,
+    //   onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
+    //   onMoveShouldSetPanResponder: (evt, gestureState) => {
+    //     return Math.abs(gestureState.dx) > 5;
+    //   },
+    //   onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+    //       return Math.abs(gestureState.dx) > 5;
+    //   },
+    //   onPanResponderMove: (evt, gestureState) => {
+    //     this._slide(gestureState.dx);
+    //   },
+    //   onPanResponderTerminationRequest: (evt, gestureState) => true,
+    //   onPanResponderRelease: (evt, gestureState) => {
+    //     // The user has released all touches while this view is the
+    //     // responder. This typically means a gesture has succeeded
 
-        // Get the height, width and compute the threshold and offset for swipe.
-        const {height, width} = Dimensions.get('window');
-        const threshold = this.props.slideThreshold || _.min([width / 3, 250]);
-        const maxOffset = _.max([height, width]);
-        const dx = gestureState.dx;
-        const newFocus = Moment(this.props.focus).add(dx < 0 ? 1 : -1, 'month');
-        const valid =
-          this.props.maxDate.diff(
-            Moment(newFocus).startOf('month'), 'seconds') >= 0 &&
-          this.props.minDate.diff(
-            Moment(newFocus).endOf('month'), 'seconds') <= 0;
+    //     // Get the height, width and compute the threshold and offset for swipe.
+    //     const {height, width} = Dimensions.get('window');
+    //     const threshold = this.props.slideThreshold || _.min([width / 3, 250]);
+    //     const maxOffset = _.max([height, width]);
+    //     const dx = gestureState.dx;
+    //     const newFocus = Moment(this.props.focus).add(dx < 0 ? 1 : -1, 'month');
+    //     const valid =
+    //       this.props.maxDate.diff(
+    //         Moment(newFocus).startOf('month'), 'seconds') >= 0 &&
+    //       this.props.minDate.diff(
+    //         Moment(newFocus).endOf('month'), 'seconds') <= 0;
 
-        // If the threshold is met perform the necessary animations and updates,
-        // and there is at least one valid date in the new focus perform the
-        // update.
-        if (Math.abs(dx) > threshold && valid) {
-          // Animate to the outside of the device the current scene.
-          LayoutAnimation.linear(() => {
-            // After that animation, update the focus date and then swipe in
-            // the corresponding updated scene.
-            this.props.onFocus && this.props.onFocus(newFocus);
-            LayoutAnimation.easeInEaseOut();
-            setTimeout(() => {
-              this._slide(dx < 0 ? maxOffset : -maxOffset)
-              setTimeout(() => {
-                LayoutAnimation.easeInEaseOut();
-                this._slide(0)
-              }, 0)
-            }, 0)
-          });
-          this._slide(dx > 0 ? maxOffset : -maxOffset);
-          return;
-        } else {
-          // Otherwise cancel the animation.
-          LayoutAnimation.spring();
-          this._slide(0);
-        }
-      },
-      onPanResponderTerminate: (evt, gestureState) => {
-        // Another component has become the responder, so this gesture
-        // should be cancelled
-        LayoutAnimation.spring();
-        this._slide(0)
-      },
-      onShouldBlockNativeResponder: (evt, gestureState) => {
-        // Returns whether this component should block native components from becoming the JS
-        // responder. Returns true by default. Is currently only supported on android.
-        return true;
-      },
-    });
+    //     // If the threshold is met perform the necessary animations and updates,
+    //     // and there is at least one valid date in the new focus perform the
+    //     // update.
+    //     if (Math.abs(dx) > threshold && valid) {
+    //       // Animate to the outside of the device the current scene.
+    //       LayoutAnimation.linear(() => {
+    //         // After that animation, update the focus date and then swipe in
+    //         // the corresponding updated scene.
+    //         this.props.onFocus && this.props.onFocus(newFocus);
+    //         LayoutAnimation.easeInEaseOut();
+    //         setTimeout(() => {
+    //           this._slide(dx < 0 ? maxOffset : -maxOffset)
+    //           setTimeout(() => {
+    //             LayoutAnimation.easeInEaseOut();
+    //             this._slide(0)
+    //           }, 0)
+    //         }, 0)
+    //       });
+    //       this._slide(dx > 0 ? maxOffset : -maxOffset);
+    //       return;
+    //     } else {
+    //       // Otherwise cancel the animation.
+    //       LayoutAnimation.spring();
+    //       this._slide(0);
+    //     }
+    //   },
+    //   onPanResponderTerminate: (evt, gestureState) => {
+    //     // Another component has become the responder, so this gesture
+    //     // should be cancelled
+    //     LayoutAnimation.spring();
+    //     this._slide(0)
+    //   },
+    //   onShouldBlockNativeResponder: (evt, gestureState) => {
+    //     // Returns whether this component should block native components from becoming the JS
+    //     // responder. Returns true by default. Is currently only supported on android.
+    //     return true;
+    //   },
+    // });
   }
 
-  componentWillReceiveProps(nextProps: Object) {
+  componentWillReceiveProps(nextProps) {
 
     if (this.props.focus != nextProps.focus || this.props.selected != nextProps.selected) {
       this.setState({
@@ -173,11 +141,11 @@ export default class DaySelector extends Component {
       // Add it to the result here.
       iterator.add(1, 'day');
     }
-    LayoutAnimation.easeInEaseOut();
+    // LayoutAnimation.easeInEaseOut();
     return result;
   };
 
-  _onDayChange = (day : Object) : void => {
+  _onDayChange = (day) => {
     console.log('_onDayChange_onDayChange_onDayChangesoosososisososi');
     let date = Moment(this.props.focus).add(day.date - 1 , 'day');
     this.props.onDayChange(date);
@@ -193,7 +161,7 @@ export default class DaySelector extends Component {
             </Text>
           )}
         </View>
-        <View ref="wrapper" {...this._panResponder.panHandlers}>
+        <View ref="wrapper" >
           {_.map(this.state.days, (week, i) =>
             <View key={i} style={[
                 styles.rowView,
@@ -241,6 +209,30 @@ DaySelector.defaultProps = {
   minDate: Moment(),
   maxDate: Moment(),
 };
+
+DaySelector.propTypes = {
+  dayPainted: React.PropTypes.array,
+  // Focus and selection control.
+  focus: React.PropTypes.any,
+  selected: React.PropTypes.any,
+  onDayChange: React.PropTypes.any,
+  onFocus: React.PropTypes.any,
+  slideThreshold: React.PropTypes.any,
+  monthOffset: React.PropTypes.any,
+  // Minimum and maximum dates.
+  minDate: React.PropTypes.any,
+  maxDate: React.PropTypes.any,
+  // Styling properties.
+  dayHeaderView: React.PropTypes.any,
+  dayHeaderText: React.PropTypes.any,
+  dayRowView: React.PropTypes.any,
+  dayView: React.PropTypes.any,
+  daySelectedView: React.PropTypes.any,
+  dayText: React.PropTypes.any,
+  dayTodayText: React.PropTypes.any,
+  daySelectedText: React.PropTypes.any,
+  dayDisabledText: React.PropTypes.any,
+}
 
 const styles = StyleSheet.create({
   headerView: {
