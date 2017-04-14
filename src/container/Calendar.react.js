@@ -47,7 +47,6 @@ export default class Calendar extends Component {
       currentMonthEvents: [],
       currentMonth: Moment(),
     }
-    console.log('sosososi', this)
   }
 
   _changeFocus = (focus) => {
