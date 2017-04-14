@@ -5,7 +5,7 @@
 This project aims at providing developers with a *cross-platform, highly customizable*, **calendar date picker** component for React Native.-->
 ## Installation
 
-`npm install --save react-native-calendar-datepicker`
+In package.json: : ` "react-native-calendar-datepicker": "github:javierjah/react-native-calendar-datepicker.git"` and `npm i`
 
 __Minimum react-native: "^0.33.0"__
 
